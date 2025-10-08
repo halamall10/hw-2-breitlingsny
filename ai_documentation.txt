@@ -1,0 +1,63 @@
+I used ChatGPT to guide me through some portions of Homework #2. Note that ChatGPT typically will give multiple ways to accomplish the same task, and for the sake of brevity I only include the option that I used. 
+
+PROMPT #1: How do I add files to my repository from a different public repository?
+ANSWER #1: Option 1: Clone the public repo, then copy into your repo
+
+Clone the public repo (starter files):
+git clone https://github.com/instructor/starter-repo.git
+
+Copy the files you need into your own repo folder:
+cp -r starter-repo/* my-repo/
+cd my-repo
+
+Add and commit:
+git add .
+git commit -m "Added starter files from public repo"
+git push origin main
+
+PROMPT #2: cp -r starter-repo/* my-repo/ -- How do I copy specific files with this? Lets say I want test.json and test2.hdf5
+ANSWER #2: Perfect — if you only want specific files, you don’t need the -r (recursive) flag, since that’s for directories.
+
+From your terminal in JupyterLab:
+cp starter-repo/test.json starter-repo/test2.hdf5 my-repo/
+
+This copies test.json and test2.hdf5 into the my-repo/ folder.
+
+PROMPT #3: How to add a git tag
+ANSWER #3: There are two main types of tags:
+Lightweight tag → just a name pointing to a commit.
+Annotated tag (recommended) → stored as a full Git object, with your name, date, and a message.
+
+🔹 Step 1: Create a tag
+Annotated tag (better for submissions/releases):
+git tag -a v1.0 -m "HW01 submission"
+
+Lightweight tag:
+git tag v1.0
+
+🔹 Step 2: Push the tag to GitHub
+
+By default, tags aren’t pushed unless you specify:
+git push origin v1.0
+
+If you want to push all tags at once:
+git push origin --tags
+
+PROMPT #4: When I test mamba list, I get way more packages than are imported into the notebook. The instructions specify to explicitly list decorator, though this is never imported into the main notebook. Does this mean I need to specify any other ones not specifically imported in the main notebook?
+ANSWER #4: Short answer: No—you don’t need to list everything you see in mamba list. Those show all packages in the env, including transitive dependencies that got installed because other packages needed them. Your environment.yml should usually include:
+
+- Direct dependencies you import/use in the notebook(s),
+- python (pinned to the right major.minor), 
+- ipykernel (so you can select the kernel), and
+- Any special/transitive dep you intentionally want to pin for compatibility (e.g., decorator at X.Y as your instructions note).
+
+Everything else will be solved automatically by mamba.
+
+PROMPT #5: I got the following error message when trying to install the environment: Collecting package metadata (repodata.json): done Solving environment: failed PackagesNotFoundError: The following packages are not available from current channels: - json=2.0* Current channels: - https://conda.anaconda.org/conda-forge - https://conda.anaconda.org/nodefaults - https://repo.anaconda.com/pkgs/main - https://repo.anaconda.com/pkgs/r To search for alternate channels that may provide the conda package you're looking for, navigate to https://anaconda.org and use the search bar at the top of the page.
+ANSWER #5: You’re getting that error because json isn’t a conda package—it’s the built-in Python standard library module. There is no json=2.0* to install, so the solver fails.
+
+What to do:
+-Remove the json=2.0* line from your environment.yml.
+-If you actually needed a JSON-related package, use the correct names:
+-json5 (third-party, lenient JSON): json5=0.9* (only if you use JSON5 files)
+-simplejson (faster JSON lib): simplejson (only if you explicitly import it)
